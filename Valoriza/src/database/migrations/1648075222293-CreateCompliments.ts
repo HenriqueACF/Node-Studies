@@ -10,7 +10,54 @@ export class CreateCompliments1648075222293 implements MigrationInterface {
                     {
                         name: "id",
                         type: "uuid",
+                        isPrimary:true
+                    },
+                    {
+                        name:"user_sender",
+                        type:"uuid"
 
+                    },
+                    {
+                        name:"user_receiver",
+                        type:"uuid"
+                    },
+                    {
+                        name:"tag_id",
+                        type:"uuid"
+                    },
+                    {
+                        name:"message",
+                        type:"varchar"
+                    },
+                    {
+                        name:"created_at",
+                        type:"timestamp"
+                    }
+                ],
+                foreignKeys:[
+                    {
+                        name:"FKUserSenderCompliments",
+                        referencedTableName:"users",
+                        referencedColumnNames:["id"],
+                        columnNames:["user_sender"],
+                        onDelete:"SET NULL",
+                        onUpdate:"SET NULL"
+                    },
+                    {
+                        name:"FKUserReciverCompliments",
+                        referencedTableName:"users",
+                        referencedColumnNames:["id"],
+                        columnNames:["user_receiver"],
+                        onDelete:"SET NULL",
+                        onUpdate:"SET NULL"
+                    },
+                    {
+                        name:"FKUserTagCompliments",
+                        referencedTableName:"tags",
+                        referencedColumnNames:["id"],
+                        columnNames:["tag_id"],
+                        onDelete:"SET NULL",
+                        onUpdate:"SET NULL"
                     }
                 ]
             })
@@ -18,6 +65,7 @@ export class CreateCompliments1648075222293 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        queryRunner.dropTable("compliments")
     }
 
 }
