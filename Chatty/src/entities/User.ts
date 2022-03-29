@@ -4,10 +4,10 @@ import {v4 as uuid} from 'uuid'
 @Entity('users')
 export class User{
     @PrimaryColumn()
-    id: String
+    id: string
 
     @Column()
-    email: String
+    email: string
 
     @CreateDateColumn()
     created_at: Date

@@ -1,41 +1,54 @@
-import { getCustomRepository, Repository } from "typeorm";
-import { Connection } from "../entities/Connection";
-import {ConnectionRepository} from "../repositories/ConnectionRepository";
+import { io } from "../http";
+import { UserService } from "../services/UserService";
+import { MessageService } from "../services/MessageService";
+import {ConnectionsService} from "../services/ConnectionService";
 
-interface IConnectionCreate {
-    socket_id: string;
-    user_id: string;
-    admin_id?: string;
-    id?: string;
+interface IParams {
+    text: string;
+    email: string;
 }
 
-class ConnectionsService {
-    private connectionsRepository: Repository<Connection>;
+io.on("connect", (socket) => {
+    const connectionService = new ConnectionsService();
+    const userService = new UserService();
+    const messageService = new MessageService();
 
-    constructor() {
-        this.connectionsRepository = getCustomRepository(ConnectionRepository);
-    }
+    socket.on("client_first_access", async (params) => {
+        const socket_id = socket.id;
+        const { text, email } = params as IParams;
+        let user_id = null;
 
-    async create({ socket_id, user_id, admin_id, id }: IConnectionCreate) {
-        const connection = this.connectionsRepository.create({
-            socket_id,
+        const userExists = await userService.findByEmail(email);
+
+        if (!userExists) {
+            const user = await userService.create(email);
+
+            await connectionService.create({
+                socket_id,
+                user_id: user.id,
+            });
+
+            user_id = user.id;
+        } else {
+            user_id = userExists.id;
+
+            const connection = await connectionService.findByUserId(userExists.id);
+
+            if (!connection) {
+                await connectionService.create({
+                    socket_id,
+                    user_id: userExists.id,
+                });
+            } else {
+                connection.socket_id = socket_id;
+
+                await connectionService.create(connection);
+            }
+        }
+
+        await messageService.create({
+            text,
             user_id,
-            admin_id,
-            id,
         });
-
-        await this.connectionsRepository.save(connection);
-
-        return connection;
-    }
-
-    async findByUserId(user_id: string) {
-        const connection = await this.connectionsRepository.findOne({
-            user_id,
-        });
-
-        return connection;
-    }
-}
-
-export { ConnectionsService };
+    })
+})
