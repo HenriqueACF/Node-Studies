@@ -1,4 +1,4 @@
-import {Request} from "express";
+import {Request, Response} from "express";
 import {getCustomRepository} from "typeorm";
 import {SurveysRepository} from "../repository/SurveysRepository";
 
