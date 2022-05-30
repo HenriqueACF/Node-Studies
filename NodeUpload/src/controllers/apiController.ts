@@ -7,6 +7,6 @@ export const ping = (req: Request, res: Response) => {
 
 export const uploadFile = async ( req: Request, res: Response) => {
 
-    console.log(req.file)
+    console.log(req.files)
     res.send('Arquivo enviado')
 }
