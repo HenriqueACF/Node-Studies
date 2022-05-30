@@ -3,9 +3,20 @@ import multer from 'multer'
 
 import * as ApiController from '../controllers/apiController';
 
+//CONFIGURAÇÕES PARA FAZER USO DE UM ARAMAZENAMENTO no disco da maquina
+const storageConfig = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './temp')
+    },
+    filename: (req, file, cb) =>{
+        cb(null, file.fieldname+'-'+Date.now()+'.jpg')
+    }
+})
+
 //Configurações basicas para realizar o uso da multer
 const upload = multer({
-    dest: './temp'
+    // dest: './temp'
+    storage: storageConfig
 })
 
 const router = Router();
@@ -21,6 +32,9 @@ router.post('/uploadFields', upload.fields([
     {name:'arquivo1', maxCount:1},
     {name:'arquivo2', maxCount:2},
 ]),  ApiController.uploadFile)
+
+//Storage
+router.post('/uploadStorage', upload.single('avatar'),  ApiController.uploadFile)
 
 
 export default router;
