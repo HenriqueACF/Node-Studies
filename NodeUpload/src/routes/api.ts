@@ -3,11 +3,14 @@ import multer from 'multer'
 
 import * as ApiController from '../controllers/apiController';
 
+//Configurações basicas para realizar o uso da multer
+const upload = multer({
+    dest: './temp'
+})
+
 const router = Router();
 
-router.post('/register', ApiController.register);
-router.post('/login', ApiController.login);
+router.post('/upload', upload.single('avatar'),  ApiController.uploadFile)
 
-router.get('/list', ApiController.list);
 
 export default router;
