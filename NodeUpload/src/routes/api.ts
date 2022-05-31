@@ -20,8 +20,7 @@ const upload = multer({
     //FILTRO NO UPLOAD
     fileFilter:(req, file, cb) => {
        const allowed: string[] = ['image/jpg', 'imagem/jpeg', 'image/png']
-
-        cb(null, allowed.includes (file.mimetype))
+        cb(null, allowed.includes(file.mimetype))
     },
     limits: {fieldSize: 8000000}
 })
