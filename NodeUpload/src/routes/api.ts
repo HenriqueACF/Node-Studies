@@ -15,8 +15,15 @@ const storageConfig = multer.diskStorage({
 
 //Configurações basicas para realizar o uso da multer
 const upload = multer({
-    // dest: './temp'
-    storage: storageConfig
+    dest: './temp',
+    // storage: storageConfig,
+    //FILTRO NO UPLOAD
+    fileFilter:(req, file, cb) => {
+       const allowed: string[] = ['image/jpg', 'imagem/jpeg', 'image/png']
+
+        cb(null, allowed.includes (file.mimetype))
+    },
+    limits: {fieldSize: 8000000}
 })
 
 const router = Router();
