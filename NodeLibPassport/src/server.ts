@@ -26,8 +26,20 @@ server.use((req: Request, res: Response) => {
 });
 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-    res.status(400); // Bad Request
+    if(err.status){
+        res.status(err.status)
+    } else {
+        res.status(400)
+    }
+
+    if(err.message){
+        res.json({error: err.message})
+    } else {
+        res.json({error: 'Ocorreu um erro. '})
+    }
+
     console.log(err);
+    res.status(400); // Bad Request
     res.json({ error: 'Ocorreu algum erro.' });
 }
 server.use(errorHandler);
